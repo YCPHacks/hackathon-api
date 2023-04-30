@@ -34,7 +34,7 @@ router.route('/users')
       res.status(200).json(result);
     })
   .post(
-    checkRequiredPermissions(USERS_PERMISSIONS.CREATE),
+//    checkRequiredPermissions(USERS_PERMISSIONS.CREATE),
     async (req, res) => {
       const result = await createUser(req.body.subject);
 
