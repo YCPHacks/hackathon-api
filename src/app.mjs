@@ -52,7 +52,7 @@ app.use(helmet({
   }
 }));
 app.use(nocache());
-//app.use(validateAccessToken);
+app.use(validateAccessToken);
 
 app.use('/api', [
   event_applications,
