@@ -29,16 +29,16 @@ router.route('/users')
   .get(
     checkRequiredPermissions(USERS_PERMISSIONS.LIST),
     async (req, res) => {
-      const data = await listUsers();
+      const result = await listUsers();
 
-      res.status(200).json(data);
+      res.status(200).json(result);
     })
   .post(
     checkRequiredPermissions(USERS_PERMISSIONS.CREATE),
     async (req, res) => {
-      await createUser();
+      const result = await createUser(req.body.subject);
 
-      res.status(201).end();
+      res.status(201).json(result);
     });
 
 router.route('/users/:user_id')
@@ -52,10 +52,10 @@ router.route('/users/:user_id')
   .get(
     checkRequiredPermissions(USERS_PERMISSIONS.READ),
     async (req, res) => {
-      const data =
+      const result =
           await readUser(req.params.user_id);
 
-      res.status(200).json(data);
+      res.status(200).json(result);
     })
   .put(
     checkRequiredPermissions(USERS_PERMISSIONS.UPDATE),
@@ -70,10 +70,10 @@ router.route('/users/:user_id/.check_in')
   .post(
     checkRequiredPermissions(USERS_PERMISSIONS.CHECK_IN),
     async (req, res) => {
-      const data = await checkInUser(req.params.user_id);
+      const result = await checkInUser(req.params.user_id);
 
       // TODO (REG): Finalize this HTTP status code.
-      res.status(200).json(data);
+      res.status(200).json(result);
     }
   );
 

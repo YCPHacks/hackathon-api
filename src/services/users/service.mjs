@@ -16,8 +16,12 @@ export async function checkInUser(userID) {
   return { data, error };
 }
 
-export async function createUser() {
-  return;
+export async function createUser(subject) {
+  const [ error, data ] = await executeSQL(
+      'CALL create_user(?);',
+      subject);
+
+  return { data, error };
 }
 
 export async function deleteUser(userID) {

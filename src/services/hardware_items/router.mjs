@@ -28,9 +28,9 @@ router.route('/hardware_items')
   .get(
     checkRequiredPermissions(HARDWARE_ITEMS_PERMISSIONS.LIST),
     async (req, res) => {
-      const data = await listHardwareItems();
+      const result = await listHardwareItems();
 
-      res.status(200).json(data);
+      res.status(200).json(result);
     })
   .post(
     checkRequiredPermissions(HARDWARE_ITEMS_PERMISSIONS.CREATE),
@@ -51,10 +51,10 @@ router.route('/hardware_items/:hardware_item_id')
   .get(
     checkRequiredPermissions(HARDWARE_ITEMS_PERMISSIONS.READ),
     async (req, res) => {
-      const data =
+      const result =
           await readHardwareItem(req.params.hardware_item_id);
 
-      res.status(200).json(data);
+      res.status(200).json(result);
     })
   .put(
     checkRequiredPermissions(HARDWARE_ITEMS_PERMISSIONS.UPDATE),
