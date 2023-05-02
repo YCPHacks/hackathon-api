@@ -14,6 +14,11 @@ import {
 } from './lib/auth.mjs';
 
 import {
+  errorHandler,
+  notFoundHandler
+} from './lib/errors.mjs';
+
+import {
   router as event_applications
 } from './services/event_applications/router.mjs';
 
@@ -60,11 +65,8 @@ app.use('/api', [
   users
 ]);
 
-// TODO (REG): Error-handling middleware
-app.use((err, req, res, next) => {
-  res.status(err.status ?? 500).json({
-    message: err.message
-  });
-});
+// TODO (REG): Finalize error-handling middleware
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export { app };
