@@ -38,4 +38,4 @@ app.get('/events/:event/application',
   res.status(200).json({ data });
 });
 
-app.listen(3001);
+export { app };
