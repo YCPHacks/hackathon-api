@@ -4,69 +4,38 @@
  *
  */
 
-import cors from 'cors';
 import express from 'express';
-import helmet from 'helmet';
-import nocache from 'nocache';
+import 'express-async-errors';
+import mysqlx from '@mysql/xdevapi';
 
 import {
-  validateAccessToken
-} from './lib/auth.mjs';
-
-import {
-  errorHandler,
-  notFoundHandler
-} from './lib/errors.mjs';
-
-import {
-  router as event_applications
-} from './services/event_applications/router.mjs';
-
-import {
-  router as hardware_items
-} from './services/hardware_items/router.mjs';
-
-import {
-  router as users
-} from './services/users/router.mjs';
+  auth,
+  claimCheck,
+  claimIncludes
+} from 'express-oauth2-jwt-bearer';
 
 const app = express();
 
-app.use(cors({
-  allowedHeaders: [
-    'Authorization',
-    'Content-Type'
-  ],
-  maxAge: 86400
-//  origin: process.env.CLIENT_ORIGIN_URL
+app.use(auth({
+  audience: process.env.AUDIENCE,
+  issuerBaseURL: process.env.ISSUER_BASE_URL
 }));
-app.use(express.json());
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      "default-src": ["'none'"],
-      "frame-ancestors": ["'none'"],
-    },
-    frameguard: {
-      action: 'deny'
-    },
-    hsts: {
-      maxAge: 31536000
-    },
-    useDefaults: false
-  }
-}));
-app.use(nocache());
-app.use(validateAccessToken);
 
-app.use('/api', [
-  event_applications,
-  hardware_items,
-  users
-]);
+app.get('/events/:event/application',
+      claimIncludes('ycp_hacks_user_roles', 'Attendee'),
+      async (req, res) => {
+  const session = await mysqlx.getSession(process.env.MYSQLX_CONFIG);
 
-// TODO (REG): Finalize error-handling middleware
-app.use(notFoundHandler);
-app.use(errorHandler);
+  const response = await session
+    .sql('CALL read_event_application(?, ?);')
+    .bind(req.params.event, req.auth.payload.ycp_hacks_user_id)
+    .execute();
 
-export { app };
+  const data = await response.fetchAll();
+
+  session.close();
+
+  res.status(200).json({ data });
+});
+
+app.listen(3001);
