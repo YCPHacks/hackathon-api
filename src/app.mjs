@@ -16,7 +16,8 @@ import {
 
 import {
   DatabaseError,
-  errorHandler
+  errorHandler,
+  processWarnings
 } from './middleware/error.middleware.mjs';
 
 const app = express();
@@ -28,12 +29,42 @@ app.use(auth({
 
 app.get('/events/:event/application',
       claimIncludes('ycp_hacks_user_roles', 'Attendee'),
-      async (req, res) => {
+      async (req, res, next) => {
 
   const session = await mysqlx
     .getSession(process.env.MYSQLX_CONFIG)
     .catch(() => { throw new Error('Cannot connect to MySQL') });
 
+
+/*
+  const response = await session
+    .sql('CALL read_event_application(?, ?);')
+    .bind(req.params.event, req.auth.payload.ycp_hacks_user_id)
+    .execute()
+    .then((res) => {
+      console.log(res.fetchAll())
+    })
+    .then(() => { session.close(); })
+    .catch((err) => { throw new DatabaseError(err.message); });
+*/
+
+
+
+  const response = await session
+    .sql('CALL read_event_application(?, ?);')
+    .bind(req.params.event, req.auth.payload.ycp_hacks_user_id)
+    .execute()
+    .then(res => res.fetchAll())
+    .then(data => { console.log(data); res.json({ data: { application: data } }); })
+    .catch((err) => { throw new DatabaseError(err.message); });
+
+
+
+
+
+
+
+/*
   try {
     const response = await session
       .sql('CALL read_event_application(?, ?);')
@@ -44,28 +75,28 @@ app.get('/events/:event/application',
 
     const result = await response.fetchAll();
 
-    if (result.length) {
-      return res.status(200).json({
-        data: {
-          application: result[0]
-        }
-      });
-    }
+    session.close();
+
+    res.status(200).json({
+      data: {
+        application: result
+      }
+    });
+
+      // (REG): What if there are no MySQL warnings, but also no data to give?
+      //        The client request wasn't bad, but there is no application to
+      //        show for that event-user combination. We need to prompt them
+      //        to create one.
+
   // If there are MySQL errors, handle them and respond to the client.
   } catch (err) {
     throw new DatabaseError(err.message);
   }
-
-  // (REG): What if there are no MySQL warnings, but also no data to give?
-  //        The client request wasn't bad, but there is no application to
-  //        show for that event-user combination. We need to prompt them
-  //        to create one.
-
-  session.close();
-
-  res.status(400).end();
+*/
+//  res.status(400).end();
 });
 
+//app.use(notFoundHandler);
 app.use(errorHandler);
 
 export { app };
