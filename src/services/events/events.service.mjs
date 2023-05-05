@@ -30,16 +30,14 @@ export async function readEventApplication(event, user_id) {
 
 export async function readEventApplication(event, user_id) {
   try {
-    const data = mysqlx.getSession(process.env.MYSQLX_CONFIG)
+    return mysqlx.getSession(process.env.MYSQLX_CONFIG)
       .then(session => {
         return session
             .sql('CALL read_event_application(?, ?);')
             .bind(event, user_id)
             .execute();
       })
-      .then(res => res.fetchAll());
-
-    return data;
+      .then(res => res.fetchAll()).catch(err => {});
   } catch (error) {
     console.error(error);
   }
@@ -55,8 +53,7 @@ export async function createEventApplication(event, user_id, application) {
             .sql('CALL create_event_application(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);')
             .bind(user_id, event, ...values)
             .execute();
-      })
-      .then(res => res.fetchAll())
+      }).catch(err => {});
   } catch (error) {
     console.error(error);
   }
