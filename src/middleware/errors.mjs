@@ -9,10 +9,14 @@ export const errorHandler = (err, req, res, next) => {
     case InvalidTokenError:
     case InsufficientScopeError:
     case UnauthorizedError:
+      console.error(err);
+
       return res.status(err.status).json({
         message: err.message
       });
     default:
+      console.error(err);
+
       return res.status(500).json({
         message: 'Internal Server Error'
       });

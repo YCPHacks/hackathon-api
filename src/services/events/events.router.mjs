@@ -15,24 +15,36 @@ import {
 
 const router = express.Router();
 
+router.use((req, res, next) => {
+  res.locals.ycp_hacks_user_id = req.auth.payload.ycp_hacks_user_id;
+
+  next();
+});
+
 router.get('/:event/application',
       checkRequiredPermissions(eventApplicationsPermissions.READ),
-      async (req, res) => {
+      async (req, res, next) => {
   const { event } = req.params;
 
-  const application = await readEventApplication(event);
+  const application = await readEventApplication(
+        event,
+        res.locals.ycp_hacks_user_id);
 
-  res.status(200).json(application);
+  return res.status(200).json(application);
 });
 
 router.post('/:event/application',
       checkRequiredPermissions(eventApplicationsPermissions.CREATE),
       async (req, res) => {
   const { application } = req.body;
+  const { event } = req.params;
 
-  await createEventApplication({ ...application });
+  const data = await createEventApplication(
+        event,
+        res.locals.ycp_hacks_user_id,
+        application);
 
-  res.status(201).end();
+  res.status(201).json(data);
 });
 
 export { router };

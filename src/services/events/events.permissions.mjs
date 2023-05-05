@@ -1,8 +1,8 @@
 export const eventApplicationsPermissions = {
   CREATE: [
-    'create:event_applications'
+//    'create:event_applications'
   ],
   READ: [
-    'read:event_applications'
+//    'read:event_applications'
   ]
 };
