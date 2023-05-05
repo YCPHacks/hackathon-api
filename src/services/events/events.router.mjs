@@ -30,8 +30,6 @@ router.post('/:event/application',
       async (req, res) => {
   const { application } = req.body;
 
-  console.table(application);
-
   await createEventApplication({ ...application });
 
   res.status(201).end();
