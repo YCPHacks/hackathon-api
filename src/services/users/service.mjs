@@ -6,7 +6,7 @@
 
 import {
   executeSQL
-} from '../../middleware/database.mjs';
+} from '../../lib/database.mjs';
 
 export async function checkInUser(userID) {
   const [ error, data ] = await executeSQL(
@@ -16,10 +16,9 @@ export async function checkInUser(userID) {
   return { data, error };
 }
 
-export async function createUser(email, subject) {
+export async function createUser(subject) {
   const [ error, data ] = await executeSQL(
-      'CALL create_user(?, ?);',
-      email,
+      'CALL create_user(?);',
       subject);
 
   return { data, error };

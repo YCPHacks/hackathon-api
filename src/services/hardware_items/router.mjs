@@ -35,9 +35,7 @@ router.route('/hardware_items')
   .post(
     checkRequiredPermissions(HARDWARE_ITEMS_PERMISSIONS.CREATE),
     async (req, res) => {
-      await createHardwareItem({
-        
-      });
+      await createHardwareItem();
 
       res.status(201).end();
     });

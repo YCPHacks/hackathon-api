@@ -9,6 +9,7 @@ import express from 'express';
 import {
   checkRequiredPermissions
 } from '../../middleware/auth0.mjs';
+} from '../../lib/auth.mjs';
 
 import {
   USERS_PERMISSIONS
@@ -25,12 +26,6 @@ import {
 
 const router = express.Router();
 
-router.use((req, res, next) => {
-  console.log(req.auth.payload);
-
-  next();
-});
-
 router.route('/users')
   .get(
     checkRequiredPermissions(USERS_PERMISSIONS.LIST),
@@ -42,11 +37,7 @@ router.route('/users')
   .post(
     checkRequiredPermissions(USERS_PERMISSIONS.CREATE),
     async (req, res) => {
-      const result = await createUser(req.body.email, req.body.subject);
-
-      if (result.error) {
-        console.error(result.error);
-      }
+      const result = await createUser(req.body.subject);
 
       res.status(201).json(result);
     });
