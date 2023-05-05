@@ -30,15 +30,16 @@ export async function readEventApplication(event, user_id) {
 
 export async function readEventApplication(event, user_id) {
   try {
-    return mysqlx.getSession(process.env.MYSQLX_CONFIG)
+    const data = mysqlx.getSession(process.env.MYSQLX_CONFIG)
       .then(session => {
         return session
             .sql('CALL read_event_application(?, ?);')
             .bind(event, user_id)
             .execute();
       })
-      .then(res => res.fetchAll())
-      .then(console.log)
+      .then(res => res.fetchAll());
+
+    return data;
   } catch (error) {
     console.error(error);
   }
