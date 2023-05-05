@@ -6,7 +6,7 @@
 
 import {
   executeSQL
-} from '../../middleware/database.mjs';
+} from '../../lib/database.mjs';
 
 export async function checkInUser(userID) {
   const [ error, data ] = await executeSQL(
