@@ -6,7 +6,7 @@
 
 import {
   executeSQL
-} from '../../lib/database.mjs';
+} from '../../middleware/database.mjs';
 
 export async function createHardwareItem() {
   return;

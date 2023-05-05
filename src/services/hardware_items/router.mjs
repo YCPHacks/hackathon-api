@@ -8,7 +8,7 @@ import express from 'express';
 
 import {
   checkRequiredPermissions
-} from '../../lib/auth.mjs';
+} from '../../middleware/auth0.mjs';
 
 import {
   HARDWARE_ITEMS_PERMISSIONS
@@ -30,7 +30,7 @@ router.route('/hardware_items')
     async (req, res) => {
       const result = await listHardwareItems();
 
-      res.status(200).json(result);
+      res.status(200).json(result.data);
     })
   .post(
     checkRequiredPermissions(HARDWARE_ITEMS_PERMISSIONS.CREATE),

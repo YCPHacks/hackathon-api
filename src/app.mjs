@@ -16,6 +16,10 @@ import {
   router as users
 } from './services/users/router.mjs';
 
+import {
+  router as hardware_items
+} from './services/hardware_items/router.mjs';
+
 const app = express();
 
 app.use(express.json());
@@ -27,6 +31,7 @@ app.use(validateAccessToken);
 
 app.use('/api/events', events);
 app.use('/api', users);
+app.use('/api', hardware_items);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
