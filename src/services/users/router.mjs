@@ -9,7 +9,6 @@ import express from 'express';
 import {
   checkRequiredPermissions
 } from '../../middleware/auth0.mjs';
-} from '../../lib/auth.mjs';
 
 import {
   USERS_PERMISSIONS
